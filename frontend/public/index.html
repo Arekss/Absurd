@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cards Against Humanity Game</title>
+    <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .container { text-align: center; padding: 20px; }
+        .answer-card { padding: 10px; border: 1px solid #ddd; margin: 5px; display: inline-block; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Cards Against Humanity Game</h1>
+        <p id="status">Connecting...</p>
+        
+        <!-- Room Creation and Join Buttons -->
+        <button id="createRoomBtn">CREATE ROOM</button>
+        <button id="joinRoomBtn">JOIN ROOM</button>
+        
+        <div id="game">
+            <h2>Game Area</h2>
+            <p id="roomCode">Room Code: None</p>
+            <p>Game will start soon...</p>
+            <div id="random-answers"></div>
+        </div>
+    </div>
+    
+    <script>
+        const socket = io();
+
+        // Connection status
+        socket.on('connect', () => {
+            document.getElementById('status').textContent = 'Connected to server';
+        });
+        socket.on('disconnect', () => {
+            document.getElementById('status').textContent = 'Disconnected from server';
+        });
+
+        // Create room button event
+        document.getElementById('createRoomBtn').addEventListener('click', () => {
+            socket.emit('createRoom');
+        });
+
+        // Join room button event
+        document.getElementById('joinRoomBtn').addEventListener('click', () => {
+            const roomCode = prompt("Enter 5-letter Room Code:");
+            if (roomCode) {
+                socket.emit('joinRoom', roomCode.toUpperCase());
+            }
+        });
+
+        // Handle room creation and joining responses
+        socket.on('roomCreated', (roomCode) => {
+            document.getElementById('roomCode').textContent = `Room Code: ${roomCode}`;
+        });
+
+        socket.on('roomJoined', (roomCode) => {
+            document.getElementById('roomCode').textContent = `Joined Room: ${roomCode}`;
+        });
+
+        socket.on('updatePlayers', (playerCount) => {
+            document.getElementById('status').textContent = `Players in Room: ${playerCount}`;
+        });
+
+        socket.on('error', (message) => {
+            alert(message);
+        });
+    </script>
+</body>
+</html>
