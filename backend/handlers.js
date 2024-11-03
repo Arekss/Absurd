@@ -18,23 +18,6 @@ function logRoomsAndClients(io) {
     });
 }
 
-// Event handler for 'createRoom'
-function onCreateRoom(io, socket) {
-    const roomCode = roomManager.generateRoomCode();
-    const player = new Player(socket.id); // Direct instantiation of Player
-
-    socket.join(roomCode); // Use Socket.IO room management
-
-    // Store room data in roomData Map
-    roomData.set(roomCode, {
-        owner: socket.id,
-        players: [player],
-        scores: {}
-    });
-
-    socket.emit('roomCreated', roomCode);
-    logRoomsAndClients(io);
-}
 
 // Event handler for 'joinRoom'
 function onJoinRoom(io, socket, roomCode) {
@@ -67,9 +50,13 @@ function onStartGame(io, socket, roomCode) {
 
 // Main connection handler
 function onConnection(io, socket) {
-    socket.on('createRoom', () => onCreateRoom(io, socket));
-    socket.on('joinRoom', (roomCode) => onJoinRoom(io, socket, roomCode));
+    // createRoomManagerEventHandlers(io,socket)
+    // createRoomEventHandlers(io,socket)
+    // createPlayerEventHandlers(io,socket)
+    socket.on('createRoom', () => roomManager.onCreateRoomEvent(io, socket));
+    socket.on('joinRoom', (roomCode) => roomManager.onJoinRoom(io, socket, roomCode));
     socket.on('startGame', (roomCode) => onStartGame(io, socket, roomCode));
+    socket.on('getNumOfPlayers', (roomCode) => roomManager.onGetNumOfPlayers(io, socket, roomCode));
 }
 
 module.exports = {

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cards Against Humanity Game</title>
+    <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .container { text-align: center; padding: 20px; }
+        .answer-card { padding: 10px; border: 1px solid #ddd; margin: 5px; display: inline-block; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Cards Against Humanity Game</h1>
+        <p id="status">Connecting...</p>
+        
+        <!-- Room Creation and Join Buttons -->
+        <button id="createRoomBtn">CREATE ROOM</button>
+        <button id="joinRoomBtn">JOIN ROOM</button>
+        <button id="GetNumOfPlayers">GetNumOfPlayers</button>
+        
+        <div id="game">
+            <h2>Game Area</h2>
+            <p id="roomCode">Room Code: None</p>
+            <p>Game will start soon...</p>
+            <div id="random-answers"></div>
+        </div>
+    </div>
+       <script src="index.js"></script>
+</body>
+</html>

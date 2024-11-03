@@ -8,7 +8,11 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
 
-app.use(express.static(path.join(__dirname, '../frontend/public')));
+app.use(express.static(path.join(__dirname, '../frontend')));
+
+app.get(['/', '/room/:roomCode'], (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/index.html'));
+});
 
 io.on('connection', function (socket) {
     handlers.onConnection(io, socket); // Delegate to handlers
