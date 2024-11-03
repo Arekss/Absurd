@@ -14,9 +14,9 @@ class RoomManager {
   }
 
   // Event handler for 'createRoom' button
-  onCreateRoomEvent(io, socket) {
+  onCreateRoomEvent(io, socket, nickname) {
     const roomCode = this.generateRoomCode();
-    const player = new Player(socket.id); // Direct instantiation of Player
+    const player = new Player(socket.id, nickname); // Direct instantiation of Player
 
     socket.join(roomCode); // Use Socket.IO room management
 
@@ -24,7 +24,6 @@ class RoomManager {
     this.roomsData.set(roomCode, {
       owner: socket.id,
       players: [player],
-      scores: {},
     });
 
     socket.emit("roomCreated", roomCode);
@@ -36,7 +35,7 @@ class RoomManager {
     const roomData = this.roomsData.get(roomCode); // Get our metadata for the room
 
     if (room && roomData && room.size < 10) {
-      const player = new Player(socket.id); // Direct instantiation of Player
+      const player = new Player(socket.id, "placeholder"); // Direct instantiation of Player
       roomData.players.push(player); // Add player to our room metadata
       socket.join(roomCode);
 
