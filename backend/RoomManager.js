@@ -21,7 +21,7 @@ class RoomManager {
     socket.join(roomCode); // Use Socket.IO room management
 
     // Store room data in roomData Map
-    this.roomsData.set(roomCode, {
+    this.roomsData.set(roomCode, { // map from roomCode to RoomData
       owner: socket.id,
       players: [player],
     });
@@ -30,12 +30,12 @@ class RoomManager {
   }
 
   // Event handler for 'joinRoom'
-  onJoinRoom(io, socket, roomCode) {
+  onJoinRoom(io, socket, roomCode, nickname) {
     const room = io.sockets.adapter.rooms.get(roomCode); // Get Socket.IO room
     const roomData = this.roomsData.get(roomCode); // Get our metadata for the room
 
     if (room && roomData && room.size < 10) {
-      const player = new Player(socket.id, "placeholder"); // Direct instantiation of Player
+      const player = new Player(socket.id, nickname); // Direct instantiation of Player
       roomData.players.push(player); // Add player to our room metadata
       socket.join(roomCode);
 

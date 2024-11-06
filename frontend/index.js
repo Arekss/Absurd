@@ -8,6 +8,18 @@ function getNickname() {
     }
     return nickname;
 }
+
+function switchView(viewID) {
+    // Select all elements with the class 'container' and set them to 'none'
+    document.querySelectorAll('.container').forEach(view => {
+        view.style.display = 'none';
+    });
+
+    // Set the specified container to 'block'
+    document.getElementById(viewID).style.display = 'block';
+}
+
+
 // Connection status
 socket.on('connect', () => {
     document.getElementById('status').textContent = 'Connected to server';
@@ -21,9 +33,8 @@ document.getElementById('createRoomBtn').addEventListener('click', () => {
 
     const nickname = getNickname();
     if (nickname){
-        document.getElementById('mainContent').style.display = 'none';
-        document.getElementById('newView').style.display = 'none';
-        document.getElementById('newView2').style.display = 'block';
+        switchView('newView2');
+        document.getElementById('playersInRoom').textContent = `Players in Room: ${nickname}`;
         socket.emit('createRoom', nickname );
     }
 });
@@ -31,9 +42,10 @@ document.getElementById('createRoomBtn').addEventListener('click', () => {
 // Join room button event
 document.getElementById('joinRoomBtn').addEventListener('click', () => {
     const roomCode = prompt("Enter 5-letter Room Code:");
-    if (roomCode) {
-        socket.emit('joinRoom', roomCode.toUpperCase());
-      //  window.location.href = `/room/${roomCode.toUpperCase()}`;
+    const nickname = getNickname();
+    if (roomCode && nickname) {
+        socket.emit('joinRoom', roomCode.toUpperCase(), nickname );
+
     }
 });
 
@@ -44,13 +56,15 @@ document.getElementById('GetNumOfPlayers').addEventListener('click', () => {
 // Handle room creation and joining responses
 socket.on('roomCreated', (roomCode) => {
     socket.roomCode = roomCode;
-  //  document.getElementById('roomCode').textContent = `Room Code: ${roomCode}`;
-     //   window.location.href = `/room/${roomCode.toUpperCase()}`;
+    document.getElementById('roomcode').textContent = `ROOM CODE: ${roomCode}`;
+
 });
 
 socket.on('roomJoined', (roomCode) => {
     socket.roomCode = roomCode;
-   // document.getElementById('roomCode').textContent = `Joined Room: ${roomCode}`;
+    switchView('newView2');
+    document.getElementById('roomcode').textContent = `ROOM CODE: ${roomCode}`;
+
 });
 
 socket.on('updatePlayers', (players) => {
@@ -58,7 +72,7 @@ socket.on('updatePlayers', (players) => {
     const playerNames = players.map(player => player.nickname).join(', ');
     
     // Display the list of player names
-    document.getElementById('status').textContent = `Players in Room: ${playerNames}`;
+    document.getElementById('playersInRoom').textContent = `Players in Room: ${playerNames}`;
 });
 
 socket.on('error', (message) => {
